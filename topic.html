@@ -25,107 +25,6 @@
 
     <script src="app.js"></script>
     <script>
-function getSVGDrawing(topicId) {
-    if (topicId === 1) {
-        // Равнобедренный треугольник
-        return `<svg width="400" height="350" viewBox="0 0 400 350" style="background: #f8f9fa; border-radius: 10px;">
-    <!-- Треугольник -->
-    <polygon points="200,50 80,280 320,280" fill="rgba(102,126,234,0.15)" stroke="#667eea" stroke-width="3"/>
-    
-    <!-- Вершины -->
-    <circle cx="200" cy="50" r="6" fill="#e74c3c"/>
-    <circle cx="80" cy="280" r="6" fill="#e74c3c"/>
-    <circle cx="320" cy="280" r="6" fill="#e74c3c"/>
-    
-    <!-- Подписи вершин -->
-    <text x="210" y="40" fill="#2c3e50" font-size="18" font-weight="bold">B</text>
-    <text x="55" y="295" fill="#2c3e50" font-size="18" font-weight="bold">A</text>
-    <text x="330" y="295" fill="#2c3e50" font-size="18" font-weight="bold">C</text>
-    
-    <!-- Боковые стороны -->
-    <text x="120" y="170" fill="#667eea" font-size="16" font-weight="bold">AB</text>
-    <text x="260" y="170" fill="#667eea" font-size="16" font-weight="bold">BC</text>
-    
-    <!-- Основание -->
-    <text x="180" y="315" fill="#e74c3c" font-size="16" font-weight="bold">Основание AC</text>
-    
-    <!-- Высота -->
-    <line x1="200" y1="50" x2="200" y2="280" stroke="#48bb78" stroke-width="3" stroke-dasharray="8,4"/>
-    <text x="210" y="165" fill="#48bb78" font-size="16" font-weight="bold">Высота BH</text>
-    
-    <!-- Углы при основании -->
-    <text x="95" y="235" fill="#f39c12" font-size="18" font-weight="bold">∠A</text>
-    <text x="285" y="235" fill="#f39c12" font-size="18" font-weight="bold">∠C</text>
-</svg>`;
-    } 
-    else if (topicId === 2) {
-        // Равносторонний треугольник
-        return `<svg width="400" height="350" viewBox="0 0 400 350" style="background: #f8f9fa; border-radius: 10px;">
-    <!-- Треугольник -->
-    <polygon points="200,40 330,290 70,290" fill="rgba(72,187,120,0.15)" stroke="#48bb78" stroke-width="3"/>
-    
-    <!-- Вершины -->
-    <circle cx="200" cy="40" r="6" fill="#e74c3c"/>
-    <circle cx="330" cy="290" r="6" fill="#e74c3c"/>
-    <circle cx="70" cy="290" r="6" fill="#e74c3c"/>
-    
-    <!-- Подписи вершин -->
-    <text x="210" y="30" fill="#2c3e50" font-size="18" font-weight="bold">A</text>
-    <text x="340" y="305" fill="#2c3e50" font-size="18" font-weight="bold">B</text>
-    <text x="45" y="305" fill="#2c3e50" font-size="18" font-weight="bold">C</text>
-    
-    <!-- Стороны -->
-    <text x="130" y="170" fill="#48bb78" font-size="16" font-weight="bold">AB</text>
-    <text x="250" y="170" fill="#48bb78" font-size="16" font-weight="bold">BC</text>
-    <text x="180" y="320" fill="#48bb78" font-size="16" font-weight="bold">AC</text>
-    
-    <!-- Углы -->
-    <text x="90" y="250" fill="#f39c12" font-size="18" font-weight="bold">60°</text>
-    <text x="290" y="250" fill="#f39c12" font-size="18" font-weight="bold">60°</text>
-    <text x="190" y="90" fill="#f39c12" font-size="18" font-weight="bold">60°</text>
-    
-    <!-- Высота -->
-    <line x1="200" y1="40" x2="200" y2="290" stroke="#3498db" stroke-width="3" stroke-dasharray="8,4"/>
-    <text x="210" y="165" fill="#3498db" font-size="16" font-weight="bold">h</text>
-    
-    <!-- Окружности -->
-    <circle cx="200" cy="185" r="35" fill="none" stroke="#9b59b6" stroke-width="2" stroke-dasharray="6,3"/>
-    <text x="245" y="140" fill="#9b59b6" font-size="14" font-weight="bold">r</text>
-    
-    <circle cx="200" cy="185" r="70" fill="none" stroke="#d69e2e" stroke-width="2" stroke-dasharray="6,3"/>
-    <text x="275" y="100" fill="#d69e2e" font-size="14" font-weight="bold">R</text>
-</svg>`;
-    }
-    else if (topicId === 3) {
-        // Прямоугольный треугольник
-        return `<svg width="400" height="350" viewBox="0 0 400 350" style="background: #f8f9fa; border-radius: 10px;">
-    <!-- Треугольник -->
-    <path d="M 100 280 L 100 100 L 300 280 Z" fill="rgba(239,68,68,0.1)" stroke="#ef4444" stroke-width="3"/>
-    
-    <!-- Вершины -->
-    <circle cx="100" cy="280" r="6" fill="#e74c3c"/>
-    <circle cx="100" cy="100" r="6" fill="#e74c3c"/>
-    <circle cx="300" cy="280" r="6" fill="#e74c3c"/>
-    
-    <!-- Подписи вершин -->
-    <text x="75" y="300" fill="#2c3e50" font-size="18" font-weight="bold">A</text>
-    <text x="75" y="80" fill="#2c3e50" font-size="18" font-weight="bold">B</text>
-    <text x="310" y="295" fill="#2c3e50" font-size="18" font-weight="bold">C</text>
-    
-    <!-- Прямой угол -->
-    <path d="M 100 250 L 130 250 L 130 280" fill="none" stroke="#ef4444" stroke-width="3"/>
-    <text x="140" y="260" fill="#ef4444" font-size="16" font-weight="bold">90°</text>
-    
-    <!-- Катеты -->
-    <text x="40" y="190" fill="#f39c12" font-size="16" font-weight="bold">AC (катет b)</text>
-    <text x="170" y="305" fill="#48bb78" font-size="16" font-weight="bold">BC (катет a)</text>
-    <text x="180" y="170" fill="#3498db" font-size="16" font-weight="bold">AB (гипотенуза c)</text>
-</svg>`;
-    }
-    return '<p>Рисунок будет добавлен позже</p>';
-}
-</script>
-    <script>
         // Данные тем (дублируем, т.к. app.js ещё не загружен)
         const topicsData = [
             { id: 1, title: "Равнобедренный треугольник", theoryContent: "Треугольник называется равнобедренным, если у него две стороны равны.\n\nСвойства:\n1. Углы при основании равны\n2. Биссектриса к основанию = медиана = высота", symbolicContent: "1. AB = BC\n2. ∠A = ∠C", drawingDescription: "Равнобедренный треугольник ABC (AB=BC)" },
@@ -203,19 +102,21 @@ function getSVGDrawing(topicId) {
             </div>
             
             <div id="drawing-section" class="topic-section">
-                <div class="section-header">
-                    <h2>Рисунок</h2>
-                    ${!progress.completedDrawing ? 
-                        `<button class="complete-btn" onclick="completeSection('Drawing', 20)">✅ Завершить (+20 🪙)</button>` : 
-                        '<span class="completed-badge">✅ Пройдено</span>'}
-                </div>
-                <div class="drawing-content">
-                    <div class="drawing-placeholder">
-                        <i class="fas fa-drafting-compass fa-4x"></i>
-                        <p>${topic.drawingDescription}</p>
-                    </div>
-                </div>
-            </div>
+    <div class="section-header">
+        <h2>🎨 Рисунок</h2>
+        ${!progress.completedDrawing ? 
+            `<button class="complete-btn" onclick="completeSection('Drawing', 20)">✅ Завершить (+20 🪙)</button>` : 
+            '<span class="completed-badge">✅ Пройдено</span>'
+        }
+    </div>
+    <div class="drawing-content">
+        <div class="drawing-placeholder">
+            ${topicId === 1 ? '<img src="triangle1.svg" alt="Равнобедренный треугольник" style="max-width: 100%;">' : ''}
+            ${topicId === 2 ? '<img src="triangle2.svg" alt="Равносторонний треугольник" style="max-width: 100%;">' : ''}
+            ${topicId === 3 ? '<img src="triangle3.svg" alt="Прямоугольный треугольник" style="max-width: 100%;">' : ''}
+        </div>
+    </div>
+</div>
         `;
         
         window.showSection = function(section) {
