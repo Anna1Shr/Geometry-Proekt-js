@@ -18,9 +18,90 @@
     </nav>
 
     <main class="container">
-        <div class="tasks-container"></div>
+        <div class="tasks-container" id="tasksContainer">
+            <p>Загрузка...</p>
+        </div>
     </main>
 
     <script src="app.js"></script>
+    <script>
+        const tasksData = [
+            { id: 1, topicId: 1, question: "Что такое равнобедренный треугольник?", answerType: "text", correctAnswer: "Треугольник, у которого две стороны равны", coinsReward: 10 },
+            { id: 2, topicId: 1, question: "Какие углы равны в равнобедренном треугольнике?", answerType: "choice", options: "Углы при основании;Все углы;Никакие", correctAnswer: "Углы при основании", coinsReward: 10 },
+            { id: 3, topicId: 2, question: "Чему равен каждый угол в равностороннем треугольнике?", answerType: "text", correctAnswer: "60°", coinsReward: 10 },
+            { id: 4, topicId: 3, question: "Чему равна гипотенуза при катетах 3 и 4?", answerType: "text", correctAnswer: "5", coinsReward: 10 }
+        ];
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const topicId = parseInt(urlParams.get('topicId'));
+        const topicTasks = tasksData.filter(t => t.topicId === topicId);
+        
+        let completedTasks = JSON.parse(localStorage.getItem('geometry_completed') || '[]');
+        let currentUser = JSON.parse(localStorage.getItem('geometry_current_user'));
+        
+        function checkAnswer(taskId, answer, coinsReward) {
+            const task = tasksData.find(t => t.id === taskId);
+            if (!task) return;
+            
+            if (completedTasks.some(ct => ct.taskId === taskId)) {
+                alert('❌ Это задание уже выполнено!');
+                return;
+            }
+            
+            if (answer.toLowerCase().trim() === task.correctAnswer.toLowerCase().trim()) {
+                completedTasks.push({ taskId, userId: currentUser?.id, coinsEarned: coinsReward });
+                localStorage.setItem('geometry_completed', JSON.stringify(completedTasks));
+                
+                if (currentUser) {
+                    currentUser.coins += coinsReward;
+                    localStorage.setItem('geometry_current_user', JSON.stringify(currentUser));
+                    
+                    const users = JSON.parse(localStorage.getItem('geometry_users') || '[]');
+                    const userIndex = users.findIndex(u => u.id === currentUser.id);
+                    if (userIndex !== -1) users[userIndex].coins = currentUser.coins;
+                    localStorage.setItem('geometry_users', JSON.stringify(users));
+                }
+                
+                alert(`✅ Правильно! +${coinsReward} монет`);
+                location.reload();
+            } else {
+                alert(`❌ Неправильно. Правильный ответ: ${task.correctAnswer}`);
+            }
+        }
+        
+        const container = document.getElementById('tasksContainer');
+        if (topicTasks.length === 0) {
+            container.innerHTML = `<h1>Нет заданий</h1><a href="topic.html?id=${topicId}" class="btn btn-secondary">← Вернуться</a>`;
+        } else {
+            container.innerHTML = `
+                <h1>📝 Задания</h1>
+                <div class="tasks-list">
+                    ${topicTasks.map(task => `
+                        <div class="task-card ${completedTasks.some(ct => ct.taskId === task.id) ? 'completed' : ''}">
+                            <h3>${task.question}</h3>
+                            ${completedTasks.some(ct => ct.taskId === task.id) ? 
+                                `<div class="task-completed">✅ Выполнено +${task.coinsReward} 🪙</div>` :
+                                task.answerType === 'choice' ?
+                                `<div class="task-options">
+                                    ${task.options.split(';').map(opt => `<button class="option-btn" onclick="checkAnswer(${task.id}, '${opt}', ${task.coinsReward})">${opt}</button>`).join('')}
+                                </div>` :
+                                `<div class="task-input">
+                                    <input type="text" id="answer-${task.id}" placeholder="Ваш ответ">
+                                    <button class="submit-btn" onclick="checkAnswer(${task.id}, document.getElementById('answer-${task.id}').value, ${task.coinsReward})">Проверить</button>
+                                </div>`
+                            }
+                            <div class="task-reward">🏆 Награда: ${task.coinsReward} монет</div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="navigation-buttons">
+                    <a href="topic.html?id=${topicId}" class="btn btn-secondary">← Вернуться к теме</a>
+                    <a href="index.html" class="btn btn-primary">На главную →</a>
+                </div>
+            `;
+        }
+        
+        window.checkAnswer = checkAnswer;
+    </script>
 </body>
 </html>
