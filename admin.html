@@ -18,9 +18,50 @@
     </nav>
 
     <main class="container">
-        <div class="admin-container"></div>
+        <div class="admin-container" id="adminContainer">
+            <p>Загрузка...</p>
+        </div>
     </main>
 
     <script src="app.js"></script>
+    <script>
+        const currentUser = JSON.parse(localStorage.getItem('geometry_current_user'));
+        if (!currentUser || !currentUser.isAdmin) {
+            window.location.href = 'index.html';
+        }
+        
+        const users = JSON.parse(localStorage.getItem('geometry_users') || '[]');
+        const topicsCount = 3;
+        const tasksCount = 4;
+        
+        document.getElementById('adminContainer').innerHTML = `
+            <h1>👑 Панель администратора</h1>
+            <div class="admin-stats">
+                <div class="stat-card"><h3>👥 Пользователи</h3><p class="stat-number">${users.length}</p></div>
+                <div class="stat-card"><h3>📚 Темы</h3><p class="stat-number">${topicsCount}</p></div>
+                <div class="stat-card"><h3>❓ Задания</h3><p class="stat-number">${tasksCount}</p></div>
+            </div>
+            <div class="admin-section">
+                <h2>⚙️ Управление системой</h2>
+                <div class="admin-actions">
+                    <button class="btn btn-danger" onclick="resetProgress()">🔄 Сбросить прогресс всех пользователей</button>
+                </div>
+            </div>
+        `;
+        
+        function resetProgress() {
+            if (confirm('Вы уверены? Это сбросит прогресс ВСЕХ пользователей!')) {
+                localStorage.removeItem('geometry_progress');
+                localStorage.removeItem('geometry_completed');
+                const users = JSON.parse(localStorage.getItem('geometry_users') || '[]');
+                users.forEach(u => { if (!u.isAdmin) u.coins = 100; });
+                localStorage.setItem('geometry_users', JSON.stringify(users));
+                alert('✅ Прогресс сброшен!');
+                location.reload();
+            }
+        }
+        
+        window.resetProgress = resetProgress;
+    </script>
 </body>
 </html>
