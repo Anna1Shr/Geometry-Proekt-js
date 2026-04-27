@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Геометрия для детей</title>
+    <!-- Убедитесь, что пути начинаются с ./ или без точки -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -14,7 +15,8 @@
                 <i class="fas fa-shapes"></i> Геометрия
             </a>
             <div class="nav-links" id="navLinks">
-                <!-- Навигация будет заполняться JS -->
+                <a href="login.html"><i class="fas fa-sign-in-alt"></i> Войти</a>
+                <a href="register.html"><i class="fas fa-user-plus"></i> Регистрация</a>
             </div>
         </div>
     </nav>
@@ -27,7 +29,7 @@
         </div>
 
         <div class="topics-grid" id="topicsGrid">
-            <!-- Темы будут загружены из JSON -->
+            <div style="text-align: center; grid-column: 1/-1;">Загрузка тем...</div>
         </div>
     </main>
 
