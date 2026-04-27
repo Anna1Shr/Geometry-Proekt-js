@@ -10,7 +10,7 @@ let completedTasks = [];
 async function loadData() {
     try {
         // Загружаем темы из JSON файла
-        const topicsResponse = await fetch('data/topics.json');
+        const topicsResponse = await fetch('topics.json');
         const data = await topicsResponse.json();
 
         topics = data.topics;
