@@ -18,9 +18,113 @@
     </nav>
 
     <main class="container">
-        <div class="topic-container"></div>
+        <div class="topic-container" id="topicContainer">
+            <p>Загрузка...</p>
+        </div>
     </main>
 
     <script src="app.js"></script>
+    <script>
+        // Данные тем (дублируем, т.к. app.js ещё не загружен)
+        const topicsData = [
+            { id: 1, title: "Равнобедренный треугольник", theoryContent: "Треугольник называется равнобедренным, если у него две стороны равны.\n\nСвойства:\n1. Углы при основании равны\n2. Биссектриса к основанию = медиана = высота", symbolicContent: "1. AB = BC\n2. ∠A = ∠C", drawingDescription: "Равнобедренный треугольник ABC (AB=BC)" },
+            { id: 2, title: "Равносторонний треугольник", theoryContent: "Треугольник называется равносторонним, если все три стороны равны.\n\nСвойства:\n1. Все углы равны 60°\n2. Любая высота = медиана = биссектриса", symbolicContent: "1. AB = BC = AC\n2. ∠A = ∠B = ∠C = 60°", drawingDescription: "Равносторонний треугольник ABC" },
+            { id: 3, title: "Прямоугольный треугольник", theoryContent: "Прямоугольный треугольник - треугольник с углом 90°.\n\nТеорема Пифагора: c² = a² + b²", symbolicContent: "1. ∠C = 90°\n2. a² + b² = c²", drawingDescription: "Прямоугольный треугольник ABC" }
+        ];
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const topicId = parseInt(urlParams.get('id'));
+        const topic = topicsData.find(t => t.id === topicId);
+        
+        if (!topic) {
+            window.location.href = 'index.html';
+        }
+        
+        // Загружаем прогресс
+        let userProgress = JSON.parse(localStorage.getItem('geometry_progress') || '[]');
+        let progress = userProgress.find(p => p.topicId === topicId);
+        if (!progress) {
+            progress = { topicId, completedTheory: false, completedSymbolic: false, completedDrawing: false, coinsEarned: 0 };
+            userProgress.push(progress);
+            localStorage.setItem('geometry_progress', JSON.stringify(userProgress));
+        }
+        
+        function completeSection(section, reward) {
+            if (!progress[`completed${section}`]) {
+                progress[`completed${section}`] = true;
+                progress.coinsEarned += reward;
+                
+                let currentUser = JSON.parse(localStorage.getItem('geometry_current_user'));
+                if (currentUser) {
+                    currentUser.coins += reward;
+                    localStorage.setItem('geometry_current_user', JSON.stringify(currentUser));
+                    
+                    const users = JSON.parse(localStorage.getItem('geometry_users') || '[]');
+                    const userIndex = users.findIndex(u => u.id === currentUser.id);
+                    if (userIndex !== -1) users[userIndex].coins = currentUser.coins;
+                    localStorage.setItem('geometry_users', JSON.stringify(users));
+                }
+                
+                localStorage.setItem('geometry_progress', JSON.stringify(userProgress));
+                alert(`✅ Раздел завершен! +${reward} монет`);
+                location.reload();
+            }
+        }
+        
+        const container = document.getElementById('topicContainer');
+        container.innerHTML = `
+            <h1>${topic.title}</h1>
+            <div class="topic-navigation">
+                <button class="nav-btn active" onclick="showSection('theory')">📖 Теория</button>
+                <button class="nav-btn" onclick="showSection('symbolic')">📝 Символическая запись</button>
+                <button class="nav-btn" onclick="showSection('drawing')">🎨 Рисунок</button>
+                <a href="tasks.html?topicId=${topicId}" class="nav-btn">❓ Задания</a>
+            </div>
+            
+            <div id="theory-section" class="topic-section active">
+                <div class="section-header">
+                    <h2>Теория</h2>
+                    ${!progress.completedTheory ? 
+                        `<button class="complete-btn" onclick="completeSection('Theory', 10)">✅ Завершить (+10 🪙)</button>` : 
+                        '<span class="completed-badge">✅ Пройдено</span>'}
+                </div>
+                <div class="theory-content">${topic.theoryContent.replace(/\n/g, '<br>')}</div>
+            </div>
+            
+            <div id="symbolic-section" class="topic-section">
+                <div class="section-header">
+                    <h2>Символическая запись</h2>
+                    ${!progress.completedSymbolic ? 
+                        `<button class="complete-btn" onclick="completeSection('Symbolic', 15)">✅ Завершить (+15 🪙)</button>` : 
+                        '<span class="completed-badge">✅ Пройдено</span>'}
+                </div>
+                <div class="symbolic-content"><pre>${topic.symbolicContent}</pre></div>
+            </div>
+            
+            <div id="drawing-section" class="topic-section">
+                <div class="section-header">
+                    <h2>Рисунок</h2>
+                    ${!progress.completedDrawing ? 
+                        `<button class="complete-btn" onclick="completeSection('Drawing', 20)">✅ Завершить (+20 🪙)</button>` : 
+                        '<span class="completed-badge">✅ Пройдено</span>'}
+                </div>
+                <div class="drawing-content">
+                    <div class="drawing-placeholder">
+                        <i class="fas fa-drafting-compass fa-4x"></i>
+                        <p>${topic.drawingDescription}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        window.showSection = function(section) {
+            document.querySelectorAll('.topic-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(`${section}-section`).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        };
+        
+        window.completeSection = completeSection;
+    </script>
 </body>
 </html>
