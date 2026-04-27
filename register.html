@@ -21,9 +21,62 @@
     </nav>
 
     <main class="container">
-        <div class="auth-container"></div>
+        <div class="auth-container">
+            <div class="auth-form">
+                <h2>📝 Регистрация</h2>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Имя пользователя</label>
+                        <input type="text" id="regUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="regEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Пароль</label>
+                        <input type="password" id="regPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-user-plus"></i> Зарегистрироваться
+                    </button>
+                </form>
+                <p class="auth-link">
+                    Уже есть аккаунт? <a href="login.html">Войдите</a>
+                </p>
+            </div>
+        </div>
     </main>
 
     <script src="app.js"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('regUsername').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            
+            const users = JSON.parse(localStorage.getItem('geometry_users') || '[]');
+            
+            if (users.find(u => u.username === username)) {
+                alert('❌ Имя пользователя уже занято');
+                return;
+            }
+            
+            const newUser = {
+                id: users.length + 1,
+                username,
+                email,
+                password,
+                coins: 100,
+                isAdmin: false
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('geometry_users', JSON.stringify(users));
+            alert('✅ Регистрация успешна! Теперь вы можете войти.');
+            window.location.href = 'login.html';
+        });
+    </script>
 </body>
 </html>
