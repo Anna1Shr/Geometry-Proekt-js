@@ -25,9 +25,92 @@
             <h1>Изучаем геометрию весело!</h1>
             <p>Теория, задачи и награды ждут тебя!</p>
         </div>
-        <div class="topics-grid" id="topicsGrid">Загрузка...</div>
+        <div class="topics-grid" id="topicsGrid"></div>
     </main>
 
-    <script src="app.js"></script>
+    <script>
+        // Встроенные данные о темах (без загрузки из файла)
+        const topics = [
+            { id: 1, title: "Равнобедренный треугольник", theoryContent: "Треугольник называется равнобедренным, если у него две стороны равны.\n\nСвойства:\n1. Углы при основании равны\n2. Биссектриса к основанию = медиана = высота" },
+            { id: 2, title: "Равносторонний треугольник", theoryContent: "Треугольник называется равносторонним, если все три стороны равны.\n\nСвойства:\n1. Все углы равны 60°\n2. Любая высота = медиана = биссектриса" },
+            { id: 3, title: "Прямоугольный треугольник", theoryContent: "Прямоугольный треугольник - треугольник с углом 90°.\n\nТеорема Пифагора: c² = a² + b²" }
+        ];
+        
+        // Получаем текущего пользователя
+        let currentUser = null;
+        try {
+            const savedUser = localStorage.getItem('geometry_current_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+            }
+        } catch(e) {}
+        
+        // Получаем прогресс пользователя
+        let userProgress = [];
+        try {
+            const savedProgress = localStorage.getItem('geometry_progress');
+            if (savedProgress) {
+                userProgress = JSON.parse(savedProgress);
+            }
+        } catch(e) {}
+        
+        // Обновляем навигацию
+        function updateNav() {
+            const navLinks = document.getElementById('navLinks');
+            if (!navLinks) return;
+            
+            if (currentUser) {
+                navLinks.innerHTML = `
+                    <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+                    <a href="profile.html"><i class="fas fa-user"></i> Профиль <span class="coin-badge">${currentUser.coins} 🪙</span></a>
+                    <a href="store.html"><i class="fas fa-store"></i> Магазин</a>
+                    ${currentUser.isAdmin ? '<a href="admin.html"><i class="fas fa-cog"></i> Админка</a>' : ''}
+                    <a href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+                `;
+            } else {
+                navLinks.innerHTML = `
+                    <a href="login.html"><i class="fas fa-sign-in-alt"></i> Войти</a>
+                    <a href="register.html"><i class="fas fa-user-plus"></i> Регистрация</a>
+                `;
+            }
+        }
+        
+        // Функция выхода
+        window.logout = function() {
+            localStorage.removeItem('geometry_current_user');
+            window.location.href = 'index.html';
+        };
+        
+        // Отображаем темы
+        const grid = document.getElementById('topicsGrid');
+        grid.innerHTML = topics.map(topic => {
+            const progress = userProgress.find(p => p.topicId === topic.id);
+            const hasTheory = progress?.completedTheory;
+            const hasSymbolic = progress?.completedSymbolic;
+            const hasDrawing = progress?.completedDrawing;
+            
+            return `
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <h3>${topic.title}</h3>
+                        ${currentUser && (hasTheory || hasSymbolic || hasDrawing) ? `
+                            <div class="progress-indicator">
+                                ${hasTheory ? '<span class="completed">📖 Теория</span>' : ''}
+                                ${hasSymbolic ? '<span class="completed">📝 Запись</span>' : ''}
+                                ${hasDrawing ? '<span class="completed">🎨 Рисунок</span>' : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                    <p>${topic.theoryContent.substring(0, 100)}...</p>
+                    ${currentUser ? 
+                        `<a href="topic.html?id=${topic.id}" class="btn btn-secondary">Изучать тему</a>` : 
+                        `<a href="login.html" class="btn btn-secondary">Войдите для изучения</a>`
+                    }
+                </div>
+            `;
+        }).join('');
+        
+        updateNav();
+    </script>
 </body>
 </html>
