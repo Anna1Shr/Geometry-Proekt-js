@@ -79,7 +79,7 @@
       "isPremium": false
     },
     {
-      "id": 5,
+      "id": 13,
       "topicId": 2,
       "question": "Чему равна высота равностороннего треугольника со стороной a?",
       "answerType": "choice",
@@ -167,7 +167,7 @@
       "isPremium": false
     }
      {
-      "id": 13,
+      "id": 5,
       "topicId": 1,
       "question": "<div style='text-align: center; margin: 20px 0;'><img src='task_shalash.jpg' alt='Задача про шалаш' style='max-width: 100%; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);'></div><b>🏕️ Задача про шалаш</b><br><br><b>Ситуация:</b> Две одинаковые палки связаны сверху (АВ и ВС), третья палка лежит на земле (АС). Папа советует привязать ещё одну палку от вершины (В) к середине основания (М).<br><br><b>Вопрос:</b> Как расположена эта палка относительно основания?",
       "answerType": "choice",
