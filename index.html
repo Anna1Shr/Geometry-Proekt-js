@@ -13,10 +13,7 @@
             <a href="index.html" class="logo">
                 <i class="fas fa-shapes"></i> Геометрия
             </a>
-            <div class="nav-links" id="navLinks">
-                <a href="login.html"><i class="fas fa-sign-in-alt"></i> Войти</a>
-                <a href="register.html"><i class="fas fa-user-plus"></i> Регистрация</a>
-            </div>
+            <div class="nav-links" id="navLinks"></div>
         </div>
     </nav>
 
@@ -25,38 +22,9 @@
             <h1>Изучаем геометрию весело!</h1>
             <p>Теория, задачи и награды ждут тебя!</p>
         </div>
-        <div class="topics-grid" id="topicsGrid"></div>
+        <div class="topics-grid" id="topicsGrid">Загрузка...</div>
     </main>
 
-    <script>
-        // Встроенные данные о темах
-        const topics = [
-            { id: 1, title: "Равнобедренный треугольник", theoryContent: "Треугольник называется равнобедренным, если у него две стороны равны.\n\nРавные стороны называются боковыми сторонами.\nТретья сторона называется основанием." },
-            { id: 2, title: "Равносторонний треугольник", theoryContent: "Треугольник называется равносторонним, если все три стороны равны.\n\nВсе углы равны 60°." },
-            { id: 3, title: "Прямоугольный треугольник", theoryContent: "Прямоугольный треугольник - треугольник с углом 90°.\n\nТеорема Пифагора: c² = a² + b²" }
-        ];
-        
-        let currentUser = null;
-        try {
-            const savedUser = localStorage.getItem('geometry_current_user');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-            }
-        } catch(e) {}
-        
-        const grid = document.getElementById('topicsGrid');
-        grid.innerHTML = topics.map(topic => `
-            <div class="topic-card">
-                <div class="topic-header">
-                    <h3>${topic.title}</h3>
-                </div>
-                <p>${topic.theoryContent.substring(0, 100)}...</p>
-                ${currentUser ? 
-                    `<a href="topic.html?id=${topic.id}" class="btn btn-secondary">Изучать тему</a>` : 
-                    `<a href="login.html" class="btn btn-secondary">Войдите для изучения</a>`
-                }
-            </div>
-        `).join('');
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
