@@ -23,158 +23,133 @@
         </div>
     </main>
 
+    <script src="app.js"></script>
     <script>
-        // Данные тем (встроенные)
-        const topics = [
-            { id: 1, title: "Равнобедренный треугольник", theoryContent: "Треугольник называется равнобедренным, если у него две стороны равны.\n\nСвойства:\n1. Углы при основании равны\n2. Биссектриса к основанию = медиана = высота", symbolicContent: "1. AB = BC\n2. ∠A = ∠C" },
-            { id: 2, title: "Равносторонний треугольник", theoryContent: "Треугольник называется равносторонним, если все три стороны равны.\n\nСвойства:\n1. Все углы равны 60°\n2. Любая высота = медиана = биссектриса", symbolicContent: "1. AB = BC = AC\n2. ∠A = ∠B = ∠C = 60°" },
-            { id: 3, title: "Прямоугольный треугольник", theoryContent: "Прямоугольный треугольник - треугольник с углом 90°.\n\nТеорема Пифагора: c² = a² + b²", symbolicContent: "1. ∠C = 90°\n2. a² + b² = c²" }
-        ];
-        
         const urlParams = new URLSearchParams(window.location.search);
         const topicId = parseInt(urlParams.get('id'));
-        const topic = topics.find(t => t.id === topicId);
         
-        if (!topic) {
-            window.location.href = 'index.html';
-        }
-        
-        // Получаем пользователя и прогресс
-        let currentUser = null;
-        try {
-            const savedUser = localStorage.getItem('geometry_current_user');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-            }
-        } catch(e) {}
-        
-        let userProgress = [];
-        try {
-            const savedProgress = localStorage.getItem('geometry_progress');
-            if (savedProgress) {
-                userProgress = JSON.parse(savedProgress);
-            }
-        } catch(e) {}
-        
-        let progress = userProgress.find(p => p.topicId === topicId);
-        if (!progress) {
-            progress = { topicId, completedTheory: false, completedSymbolic: false, completedDrawing: false, coinsEarned: 0 };
-            userProgress.push(progress);
-            localStorage.setItem('geometry_progress', JSON.stringify(userProgress));
-        }
-        
-        function updateNav() {
-            const navLinks = document.getElementById('navLinks');
-            if (!navLinks) return;
-            
-            if (currentUser) {
-                navLinks.innerHTML = `
-                    <a href="index.html"><i class="fas fa-home"></i> Главная</a>
-                    <a href="profile.html"><i class="fas fa-user"></i> Профиль <span class="coin-badge">${currentUser.coins} 🪙</span></a>
-                    <a href="store.html"><i class="fas fa-store"></i> Магазин</a>
-                    ${currentUser.isAdmin ? '<a href="admin.html"><i class="fas fa-cog"></i> Админка</a>' : ''}
-                    <a href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt"></i> Выйти</a>
-                `;
+        // Ждём загрузки данных из app.js
+        function waitForData() {
+            if (typeof topics !== 'undefined' && topics.length > 0) {
+                renderTopic();
             } else {
-                navLinks.innerHTML = `
-                    <a href="login.html"><i class="fas fa-sign-in-alt"></i> Войти</a>
-                    <a href="register.html"><i class="fas fa-user-plus"></i> Регистрация</a>
-                `;
+                setTimeout(waitForData, 100);
             }
         }
         
-        function completeSection(section, reward) {
-            if (!currentUser) {
-                alert('Войдите, чтобы завершить раздел');
-                window.location.href = 'login.html';
+        // ===== ЭТА ФУНКЦИЯ - ВСТАВЬТЕ ЕЁ СЮДА =====
+        function renderTopic() {
+            const topic = topics.find(t => t.id === topicId);
+            
+            if (!topic) {
+                window.location.href = 'index.html';
                 return;
             }
             
-            if (!progress[`completed${section}`]) {
-                progress[`completed${section}`] = true;
-                progress.coinsEarned += reward;
-                
-                currentUser.coins += reward;
-                localStorage.setItem('geometry_current_user', JSON.stringify(currentUser));
+            // Загружаем прогресс
+            let userProgress = JSON.parse(localStorage.getItem('geometry_progress') || '[]');
+            let progress = userProgress.find(p => p.topicId === topicId);
+            if (!progress) {
+                progress = { topicId, completedTheory: false, completedSymbolic: false, completedDrawing: false, coinsEarned: 0 };
+                userProgress.push(progress);
                 localStorage.setItem('geometry_progress', JSON.stringify(userProgress));
-                
-                alert(`✅ Раздел завершен! +${reward} монет`);
-                location.reload();
             }
-        }
-        
-        function showSection(section, btn) {
-            document.querySelectorAll('.topic-section').forEach(s => s.classList.remove('active'));
-            document.getElementById(`${section}-section`).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }
-        
-        window.logout = function() {
-            localStorage.removeItem('geometry_current_user');
-            window.location.href = 'index.html';
-        };
-        
-        const container = document.getElementById('topicContainer');
-        container.innerHTML = `
-            <h1>${topic.title}</h1>
-            <div class="topic-navigation">
-                <button class="nav-btn active" onclick="showSection('theory', this)">📖 Теория</button>
-                <button class="nav-btn" onclick="showSection('symbolic', this)">📝 Символическая запись</button>
-                <button class="nav-btn" onclick="showSection('drawing', this)">🎨 Рисунок</button>
-                <a href="tasks.html?topicId=${topicId}" class="nav-btn">❓ Задания</a>
-            </div>
             
-            <div id="theory-section" class="topic-section active">
-                <div class="section-header">
-                    <h2>📖 Теория</h2>
-                    ${!progress.completedTheory ? 
-                        `<button class="complete-btn" onclick="completeSection('Theory', 10)">✅ Завершить (+10 🪙)</button>` : 
-                        '<span class="completed-badge">✅ Пройдено +10 🪙</span>'}
-                </div>
-                <div class="theory-content">${topic.theoryContent.replace(/\n/g, '<br>')}</div>
-            </div>
+            function completeSection(section, reward) {
+                if (!progress[`completed${section}`]) {
+                    progress[`completed${section}`] = true;
+                    progress.coinsEarned += reward;
+                    
+                    let currentUser = JSON.parse(localStorage.getItem('geometry_current_user'));
+                    if (currentUser) {
+                        currentUser.coins += reward;
+                        localStorage.setItem('geometry_current_user', JSON.stringify(currentUser));
+                        
+                        const users = JSON.parse(localStorage.getItem('geometry_users') || '[]');
+                        const userIndex = users.findIndex(u => u.id === currentUser.id);
+                        if (userIndex !== -1) users[userIndex].coins = currentUser.coins;
+                        localStorage.setItem('geometry_users', JSON.stringify(users));
+                    }
+                    
+                    localStorage.setItem('geometry_progress', JSON.stringify(userProgress));
+                    alert(`✅ Раздел завершен! +${reward} монет`);
+                    location.reload();
+                }
+            }
             
-            <div id="symbolic-section" class="topic-section">
-                <div class="section-header">
-                    <h2>📝 Символическая запись</h2>
-                    ${!progress.completedSymbolic ? 
-                        `<button class="complete-btn" onclick="completeSection('Symbolic', 15)">✅ Завершить (+15 🪙)</button>` : 
-                        '<span class="completed-badge">✅ Пройдено +15 🪙</span>'}
-                </div>
-                <div class="symbolic-content"><pre>${topic.symbolicContent}</pre></div>
-            </div>
+            function showSection(section, btn) {
+                document.querySelectorAll('.topic-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(`${section}-section`).classList.add('active');
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
             
-            <div id="drawing-section" class="topic-section">
-                <div class="section-header">
-                    <h2>🎨 Рисунок</h2>
-                    ${!progress.completedDrawing ? 
-                        `<button class="complete-btn" onclick="completeSection('Drawing', 20)">✅ Завершить (+20 🪙)</button>` : 
-                        '<span class="completed-badge">✅ Пройдено +20 🪙</span>'}
+            const container = document.getElementById('topicContainer');
+            container.innerHTML = `
+                <h1>${topic.title}</h1>
+                <div class="topic-navigation">
+                    <button class="nav-btn active" onclick="showSection('theory', this)">📖 Теория</button>
+                    <button class="nav-btn" onclick="showSection('symbolic', this)">📝 Символическая запись</button>
+                    <button class="nav-btn" onclick="showSection('drawing', this)">🎨 Рисунок</button>
+                    <a href="tasks.html?topicId=${topicId}" class="nav-btn">❓ Задания</a>
                 </div>
-                <div class="drawing-content">
-                    <div class="drawing-placeholder" id="drawingPlaceholder"></div>
+                
+                <div id="theory-section" class="topic-section active">
+                    <div class="section-header">
+                        <h2>📖 Теория</h2>
+                        ${!progress.completedTheory ? 
+                            `<button class="complete-btn" onclick="completeSection('Theory', 10)">✅ Завершить (+10 🪙)</button>` : 
+                            '<span class="completed-badge">✅ Пройдено +10 🪙</span>'}
+                    </div>
+                    <div class="theory-content">${topic.theoryContent.replace(/\n/g, '<br>')}</div>
                 </div>
-            </div>
-        `;
-        
-        // Добавляем картинку
-        const drawingDiv = document.getElementById('drawingPlaceholder');
-        if (drawingDiv) {
-            const img = document.createElement('img');
-            img.src = `triangle${topicId}.png`;
-            img.alt = topic.title;
-            img.style.maxWidth = '100%';
-            img.style.borderRadius = '10px';
-            img.onerror = function() {
-                drawingDiv.innerHTML = '<p style="color: #999; padding: 40px;">🖼️ Рисунок будет добавлен позже</p>';
-            };
-            drawingDiv.appendChild(img);
+                
+                <div id="symbolic-section" class="topic-section">
+                    <div class="section-header">
+                        <h2>📝 Символическая запись</h2>
+                        ${!progress.completedSymbolic ? 
+                            `<button class="complete-btn" onclick="completeSection('Symbolic', 15)">✅ Завершить (+15 🪙)</button>` : 
+                            '<span class="completed-badge">✅ Пройдено +15 🪙</span>'}
+                    </div>
+                    <div class="symbolic-content"><pre>${topic.symbolicContent}</pre></div>
+                </div>
+                
+                <div id="drawing-section" class="topic-section">
+                    <div class="section-header">
+                        <h2>🎨 Рисунок</h2>
+                        ${!progress.completedDrawing ? 
+                            `<button class="complete-btn" onclick="completeSection('Drawing', 20)">✅ Завершить (+20 🪙)</button>` : 
+                            '<span class="completed-badge">✅ Пройдено +20 🪙</span>'
+                        }
+                    </div>
+                    <div class="drawing-content">
+                        <div class="drawing-placeholder" id="drawingPlaceholder"></div>
+                    </div>
+                </div>
+            `;
+            
+            // Добавляем ТОЛЬКО картинку, БЕЗ текста
+            const drawingDiv = document.getElementById('drawingPlaceholder');
+            if (drawingDiv) {
+                const img = document.createElement('img');
+                img.src = `triangle${topicId}.png`;
+                img.alt = topic.title;
+                img.style.maxWidth = '100%';
+                img.style.borderRadius = '10px';
+                img.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                img.onerror = function() {
+                    drawingDiv.innerHTML = '<p style="color: #e74c3c; padding: 40px; text-align: center;">❌ Файл triangle' + topicId + '.png не найден! Добавьте рисунок в папку проекта.</p>';
+                };
+                drawingDiv.appendChild(img);
+                // НЕТ ТЕКСТА ПОД КАРТИНКОЙ!
+            }
+            
+            window.showSection = showSection;
+            window.completeSection = completeSection;
         }
+        // ===== КОНЕЦ ФУНКЦИИ =====
         
-        updateNav();
-        window.completeSection = completeSection;
-        window.showSection = showSection;
+        waitForData();
     </script>
 </body>
 </html>
