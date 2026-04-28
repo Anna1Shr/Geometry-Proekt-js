@@ -29,7 +29,23 @@
             { id: 1, topicId: 1, question: "Что такое равнобедренный треугольник?", answerType: "text", correctAnswer: "Треугольник, у которого две стороны равны", coinsReward: 10 },
             { id: 2, topicId: 1, question: "Какие углы равны в равнобедренном треугольнике?", answerType: "choice", options: "Углы при основании;Все углы;Никакие", correctAnswer: "Углы при основании", coinsReward: 10 },
             { id: 3, topicId: 2, question: "Чему равен каждый угол в равностороннем треугольнике?", answerType: "text", correctAnswer: "60°", coinsReward: 10 },
-            { id: 4, topicId: 3, question: "Чему равна гипотенуза при катетах 3 и 4?", answerType: "text", correctAnswer: "5", coinsReward: 10 }
+            { id: 4, topicId: 3, question: "Чему равна гипотенуза при катетах 3 и 4?", answerType: "text", correctAnswer: "5", coinsReward: 10 },
+            // НОВАЯ ЗАДАЧА ПРО ШАЛАШ
+            { 
+                id: 5, 
+                topicId: 1, 
+                question: `<div style="text-align: center; margin: 20px 0;">
+                    <img src="task_shalash.jpg" alt="Задача про шалаш" style="max-width: 100%; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                </div>
+                <b>🏕️ Задача про шалаш</b><br><br>
+                <b>Ситуация:</b> Две одинаковые палки связаны сверху (АВ и ВС), третья палка лежит на земле (АС). 
+                Папа советует привязать ещё одну палку от вершины (В) к середине основания (М).<br><br>
+                <b>Вопрос:</b> Как расположена эта палка относительно основания?`,
+                answerType: "choice", 
+                options: "Параллельно основанию;Перпендикулярно основанию;Под углом 45°;Под углом 60°", 
+                correctAnswer: "Перпендикулярно основанию", 
+                coinsReward: 20 
+            }
         ];
         
         const urlParams = new URLSearchParams(window.location.search);
